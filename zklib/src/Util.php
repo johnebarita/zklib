@@ -39,8 +39,7 @@ class Util
     const CMD_DELETE_USER_TEMP = 19; # Delete some fingerprint template
     const CMD_CLEAR_ADMIN = 20; # Cancel the manager
 
-    const CMD_REG_EVENT = 500; # Registers the event.
-
+    const CMD_REG_EVENT = 500; #Register the event
     const LEVEL_USER = 0;
     const LEVEL_ADMIN = 14;
 
@@ -58,11 +57,14 @@ class Util
     const ATT_STATE_FINGERPRINT = 1;
     const ATT_STATE_PASSWORD = 0;
     const ATT_STATE_CARD = 2;
-    
+
     const ATT_TYPE_CHECK_IN = 0;
     const ATT_TYPE_CHECK_OUT = 1;
     const ATT_TYPE_OVERTIME_IN = 4;
     const ATT_TYPE_OVERTIME_OUT = 5;
+
+
+    const   EF_ATTLOG = 1;
 
     /**
      * Encode a timestamp send at the timeclock
@@ -148,7 +150,6 @@ class Util
      */
     static public function getSize(ZKLib $self)
     {
-
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($self->_data_recv, 0, 8));
         $command = hexdec($u['h2'] . $u['h1']);
 
@@ -216,14 +217,11 @@ class Util
      */
     static public function createHeader($command, $chksum, $session_id, $reply_id, $command_string)
     {
-        var_dump('</br> command: '.$command.'</br> cksum: '.$chksum.'</br> session_id: '.$session_id.'</br> reply_id: '.$reply_id.'</br> command_string: '.$command_string);
+
 
         $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id) . $command_string;
 
-        var_dump($buf);
         $buf = unpack('C' . (8 + strlen($command_string)) . 'c', $buf);
-        echo "<pre>";
-        var_dump($buf);
 
         $u = unpack('S', self::createChkSum($buf));
 
@@ -240,33 +238,11 @@ class Util
 
         $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id);
 
+
         return $buf . $command_string;
 
     }
-    static public function createHeader2($command, $chksum, $session_id, $reply_id, $command_string)
-    {
-        $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id,$command_string);
 
-        $buf = unpack('C' . (8 + strlen($command_string)) . 'c', $buf);
-
-        $u = unpack('S', self::createChkSum($buf));
-
-        if (is_array($u)) {
-            $u = reset($u);
-        }
-        $chksum = $u;
-
-        $reply_id += 1;
-
-        if ($reply_id >= self::USHRT_MAX) {
-            $reply_id -= self::USHRT_MAX;
-        }
-
-        $buf = pack('SSSS', $command, $chksum, $session_id, $reply_id,$command_string);
-
-        return $buf ;
-
-    }
     /**
      * Checks a returned packet to see if it returned Util::CMD_ACK_OK,
      * indicating success
@@ -276,8 +252,8 @@ class Util
     static public function checkValid($reply)
     {
         $u = unpack('H2h1/H2h2', substr($reply, 0, 8));
-        $command = hexdec($u['h2'] . $u['h1']);
 
+        $command = hexdec($u['h2'] . $u['h1']);
         /** TODO: Some device can return 'Connection unauthorized' then should check also */
         if ($command == self::CMD_ACK_OK || $command == self::CMD_ACK_UNAUTH) {
             return true;
@@ -330,7 +306,7 @@ class Util
 
         return $ret;
     }
-    
+
     /**
      * Get Attendance Type string
      * @param integer $type

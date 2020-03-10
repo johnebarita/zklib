@@ -38,8 +38,8 @@ class Attendance
                 $id = str_replace(chr(0), '', $id);
                 $state = hexdec(substr($u[1], 56, 2));
                 $timestamp = Util::decodeTime(hexdec(Util::reverseHex(substr($u[1], 58, 8))));
-                $type = hexdec(Util::reverseHex(substr($u[1], 66, 2)));
-
+                $type = hexdec(Util::reverseHex(substr($u[1], 66, 2 )));
+				
                 $attendance[] = [
                     'uid' => $uid,
                     'id' => $id,
@@ -70,26 +70,4 @@ class Attendance
         return $self->_command($command, $command_string);
     }
 
-    public function mycode(ZKLib $self)
-    {
-
-        $self->_section = __METHOD__;
-
-        $command = 500;
-        $command_string = '1';
-
-        $session = $self->_command($command, $command_string, Util::COMMAND_TYPE_DATA);
-
-        if ($session === false) {
-            return [];
-        }
-        $ret = Util::checkValid($self->_data_recv);
-        if ($ret) {
-            while (true) {
-                socket_recvfrom($self->_zkclient, $self->_data_recv, 1024, 0, $self->_ip, $self->_port);
-                var_dump($self);
-            }
-        }
-        return $ret;
-    }
 }

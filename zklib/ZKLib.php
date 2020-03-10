@@ -3,6 +3,7 @@ require(__DIR__ . '/vendor/autoload.php');
 
 use ZK\Util;
 
+
 class ZKLib
 {
     public $_ip;
@@ -43,61 +44,26 @@ class ZKLib
         $chksum = 0;
         $session_id = $this->_session_id;
 
-
         $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->_data_recv, 0, 8));
         $reply_id = hexdec($u['h8'] . $u['h7']);
 
         $buf = Util::createHeader($command, $chksum, $session_id, $reply_id, $command_string);
 
-
         socket_sendto($this->_zkclient, $buf, strlen($buf), 0, $this->_ip, $this->_port);
 
         try {
-            socket_recvfrom($this->_zkclient, $this->_data_recv, 1024, 0, $this->_ip, $this->_port);
+            @socket_recvfrom($this->_zkclient, $this->_data_recv, 1024, 0, $this->_ip, $this->_port);
 
             $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->_data_recv, 0, 8));
+
             $ret = false;
             $session = hexdec($u['h6'] . $u['h5']);
+
             if ($type === Util::COMMAND_TYPE_GENERAL && $session_id === $session) {
                 $ret = substr($this->_data_recv, 8);
             } else if ($type === Util::COMMAND_TYPE_DATA && !empty($session)) {
                 $ret = $session;
             }
-
-            return $ret;
-        } catch (ErrorException $e) {
-            return false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    public function _command2($command, $command_string, $type = Util::COMMAND_TYPE_GENERAL)
-    {
-        $chksum = 0;
-        $session_id = $this->_session_id;
-
-
-        $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6/H2h7/H2h8', substr($this->_data_recv, 0, 8));
-        $reply_id = hexdec($u['h8'] . $u['h7']);
-
-        $buf = Util::createHeader2($command, $chksum, $session_id, $reply_id, $command_string);
-
-
-        socket_sendto($this->_zkclient, $buf, strlen($buf), 0, $this->_ip, $this->_port);
-
-        try {
-            socket_recvfrom($this->_zkclient, $this->_data_recv, 1024, 0, $this->_ip, $this->_port);
-
-            $u = unpack('H2h1/H2h2/H2h3/H2h4/H2h5/H2h6', substr($this->_data_recv, 0, 8));
-            $ret = false;
-            $session = hexdec($u['h6'] . $u['h5']);
-            if ($type === Util::COMMAND_TYPE_GENERAL && $session_id === $session) {
-                $ret = substr($this->_data_recv, 8);
-            } else if ($type === Util::COMMAND_TYPE_DATA && !empty($session)) {
-                $ret = $session;
-            }
-
             return $ret;
         } catch (ErrorException $e) {
             return false;
@@ -377,17 +343,11 @@ class ZKLib
     {
         return (new ZK\Time())->get($this);
     }
-
     public function enable_realtime()
     {
         return (new ZK\Realtime())->enable_realtime($this);
     }
-    public function recv_event()
-    {
+    public function recv_event(){
         return (new ZK\Realtime())->recv_event($this);
-    }
-    public function mycode()
-    {
-        return (new ZK\Attendance())->mycode($this);
     }
 }

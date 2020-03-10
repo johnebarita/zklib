@@ -1,41 +1,37 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: User
- * Date: 25/02/2020
- * Time: 9:50 AM
+ * User: capstonestudent
+ * Date: 2/24/2020
+ * Time: 9:13 PM
  */
 
 namespace ZK;
 
+use Couchbase\Exception;
 use ZKLib;
-
 
 class Realtime
 {
-
     public function enable_realtime(ZKLib $self)
     {
         $self->_section = __METHOD__;
         $command = Util::CMD_REG_EVENT;
-        $byte1 = chr(255);
-        $byte2 = chr(0);
-        $command_string = ($byte1 . $byte1 . $byte2 . $byte2);
-        $session = $self->_command($command, $command_string);
+        $command_string = 'ffff0000';
+        $session = $self->_command($command, $command_string, Util::COMMAND_TYPE_DATA);
 
         if ($session === false) {
             return false;
         }
-        return $ret = Util::checkValid($self->_data_recv);
+
+       $ret  = Util::checkValid($self->_data_recv);
+        return $ret;
     }
 
-    public function recv_event(ZKLib $self)
-    {
-        if (false !== ($ret =socket_recv($self->_zkclient, $dataRec, 4096, 0))) {
-            var_dump($dataRec);
-            $command = Util::CMD_ACK_OK;
-            $command_string = '';
-            $session = $self->_command($command, $command_string);
-        }
+    public  function  recv_event(ZKLib $self){
+        echo "<pre/>";
+        var_dump($self->_zkclient);
+//        $ret = socket_recv($self->_zkclient, $dataRec, 4096, 0);
+//        var_dump($ret);
     }
 }

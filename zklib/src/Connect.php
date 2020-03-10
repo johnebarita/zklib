@@ -24,8 +24,6 @@ class Connect
 
         $buf = Util::createHeader($command, $chksum, $session_id, $reply_id, $command_string);
 
-        var_dump('send to '.$buf);
-
         socket_sendto($self->_zkclient, $buf, strlen($buf), 0, $self->_ip, $self->_port);
 
         try {
@@ -39,8 +37,6 @@ class Connect
                 }
 
                 $self->_session_id = $session;
-                echo "<pre>";
-                var_dump("is connected: ".Util::checkValid($self->_data_recv));
                 return Util::checkValid($self->_data_recv);
             } else {
                 return false;
