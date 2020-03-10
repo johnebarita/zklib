@@ -134,11 +134,6 @@
                     }
                 ?>
             </table>
-            <?php
-                if (count($attendance) > 0) {
-                    $zk->clearAttendance(); // Remove attendance log only if not empty
-                }
-            ?>
         <?php } ?>
         <?php
         $zk->setTime(date('Y-m-d H:i:s')); // Synchronize time
