@@ -13,7 +13,7 @@
     include('zklib/ZKLib.php');
 
     $zk = new ZKLib(
-        '169.254.132.152' //your device IP
+        '43.224.189.146' //your device IP
     );
 
     $ret = $zk->connect();
