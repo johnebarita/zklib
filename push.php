@@ -151,8 +151,8 @@ if ($ret) {
                     $btime=date("H:i:s", strtotime($attItem['timestamp']));
                     $btype=ZK\Util::getAttType($attItem['type']);
 
-                    $query = "INSERT INTO tbl_attendance(bdeviceserial, buid, bid, bname, bstate,bdate,btime,btype) 
-                                      VALUES ('$bdeviceserial', '$buid', '$bid', '$bname', '$bstate','$bdate','$btime','$btype') ";
+                    $query = "INSERT INTO tbl_attendance( buid, bid, bname, bstate,bdate,btime,btype) 
+                                      VALUES ( '$buid', '$bid', '$bname', '$bstate','$bdate','$btime','$btype') ";
                     if (!$result = mysqli_query($db,$query)) {
                         exit(mysqli_error());
                     }
